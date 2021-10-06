@@ -10,7 +10,7 @@
 <body>
     <div id="canvas"></div>
     <script>
-        canvas.onclick = (e) => {
+        canvas.onmousemove = (e) => {    //.onclick是点击的时候加div，现在要鼠标移动的时候加div
             console.log(e.clientX)
             console.log(e.clientY)
             // console.log 调试大法
