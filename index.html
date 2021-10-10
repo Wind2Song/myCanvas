@@ -8,26 +8,42 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="canvas"></div>
+    <canvas id="canvas" width="100" height="100"></canvas>
     <script>
-        canvas.onmousemove = (e) => {    //.onclick是点击的时候加div，现在要鼠标移动的时候加div
-            console.log(e.clientX)
-            console.log(e.clientY)
-            // console.log 调试大法
-            let div = document.createElement('div') 
-            //让文档创建一个标签div，鼠标点哪儿，哪儿就显示；要用绝对定位
-            div.style.position = 'absolute' //让div的内联样式里的position是absolute
-            div.style.left = e.clientX + 'px'
-            div.style.top = e.clientY + 'px'
-            div.style.width = '6px'
-            div.style.height = '6px'
-            div.style.marginLeft = '-3px'
-            div.style.marginTop = '-3px'
-            div.style.borderRadius = '50%'
-            div.style.background = 'black'
-            canvas.appendChild(div) //添加一个子元素div到canvas上
-
+        let canvas = document.getElementById("canvas");
+        canvas.width = document.documentElement.clientWidth//画布正好占据整个屏幕的方法
+        canvas.height = document.documentElement.clientHeight
+        //canvas.width = document.body.clientWidth 获取的是body的宽高，而不是文档的，所以高度不行
+        //canvas.height = document.body.clientHeight body的高度由内容决定，而不是屏幕
+        //画线
+        
+        let painting = false
+        canvas.onmousedown = ()=>{
+            painting = true
         }
+
+        let ctx = canvas.getContext("2d");//声明一个形状
+        ctx.fillStyle = "red";
+        
+        // ctx.fillRect (20, 10, 80, 80);//方形Rect
+        //这四句，直接crm来的，要学着适应这样的抄代码啊哎
+        canvas.onmousemove = (e)=>{//不用新建节点div，只是在canvas上画形状，没有增加新元素
+            if(painting === true){
+                //ctx.fillRect (e.clientX-2, e.clientY - 2, 4, 4);//点出来的点变方
+                ctx.beginPath();
+                ctx.arc(e.clientX, e.clientY, 2, 0, 2 * Math.PI, false);
+                
+                ctx.fill();
+            } else {
+                console.log(什么都不做)
+            }
+         
+        }
+        
+        canvas.onmouseup = ()=>{
+            painting = false
+        }
+      
     </script>
 </body>
 </html>
