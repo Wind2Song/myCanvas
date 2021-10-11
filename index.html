@@ -12,37 +12,96 @@
     <script>
         let canvas = document.getElementById("canvas");
         canvas.width = document.documentElement.clientWidth//画布正好占据整个屏幕的方法
-        canvas.height = document.documentElement.clientHeight
+        canvas.height = document.documentElement.clientHeight//canvas不用写style,这个.width是canvas的HTML属性
         //canvas.width = document.body.clientWidth 获取的是body的宽高，而不是文档的，所以高度不行
         //canvas.height = document.body.clientHeight body的高度由内容决定，而不是屏幕
         //画线
-        
+                
         let painting = false
-        canvas.onmousedown = ()=>{
-            painting = true
-        }
-
-        let ctx = canvas.getContext("2d");//声明一个形状
+        let last
+        let ctx = canvas.getContext("2d");//crm
         ctx.fillStyle = "red";
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';// (还得是英文搜啊)起点是lineJoin，...，最后搜了line end round
+
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+        // drawLine(0,0,300,300)
+        // drawLine(300,300,200,200) // 放大缺陷，解决问题
+
+
+        var isTouchDevice = 'ontouchstart' in document.documentElement;
+        //console.log(isTouchDevice)//监测是否支持触摸屏
+        if(isTouchDevice === true){
+            // console.log('目前什么也没写')//console.log调试大法：是否支持触摸屏
+            canvas.ontouchstart = (e) =>{
+                painting = true
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                last = [x, y]
+            }
+            
+            canvas.ontouchmove = (e) =>{
+                // console.log(e)//监听触屏事件，找位置坐标，也只能log才能做到
+                // let x = e.touches[0].clientX
+                // let y = e.touches[0].clientY
+                // console.log(x, y)
+                // ctx.beginPath();
+                // ctx.arc(e.touches[0].clientX, e.touches[0].clientY, 4, 0, 2 * Math.PI, false);
+                // ctx.fill();
+                if (painting === true) {
+                    // console.log(last)
+                    let x = e.touches[0].clientX
+                    let y = e.touches[0].clientY               
+                    drawLine(last[0], last[1], x, y)
+                    last = [x, y]
+                }
+            }
+            
+        } else{
+            canvas.onmousedown = (e)=>{
+                painting = true
+                last = [e.clientX, e.clientY]                         
+            }
+
+            canvas.onmousemove = (e) =>{
+                if (painting === true) {
+                    // console.log(last)
+                    drawLine(last[0], last[1], e.clientX, e.clientY)
+                    last = [e.clientX, e.clientY]
+                }
+            }
+
+            canvas.onmouseup = () =>{
+                painting = false
+            }
+        }
+        
+
+
         
         // ctx.fillRect (20, 10, 80, 80);//方形Rect
         //这四句，直接crm来的，要学着适应这样的抄代码啊哎
-        canvas.onmousemove = (e)=>{//不用新建节点div，只是在canvas上画形状，没有增加新元素
-            if(painting === true){
-                //ctx.fillRect (e.clientX-2, e.clientY - 2, 4, 4);//点出来的点变方
-                ctx.beginPath();
-                ctx.arc(e.clientX, e.clientY, 2, 0, 2 * Math.PI, false);
+        // canvas.onmousemove = (e)=>{//不用新建节点div，只是在canvas上画形状，没有增加新元素；浏览器会调用canvas,onmousemove(事件相关信息)传给参数e
+        //     if(painting === true){
+        //         //ctx.fillRect (e.clientX-2, e.clientY - 2, 4, 4);//点出来的点变方
+        //         ctx.beginPath();
+        //         ctx.arc(e.clientX, e.clientY, 4, 0, 2 * Math.PI, false);
                 
-                ctx.fill();
-            } else {
-                console.log(什么都不做)
-            }
+        //         ctx.fill();
+        //     } 
+        //     // else {console.log('什么都不做')}
          
-        }
+        // }
         
-        canvas.onmouseup = ()=>{
-            painting = false
-        }
+        // canvas.onmouseup = ()=>{
+        //     painting = false
+        // }
       
     </script>
 </body>
